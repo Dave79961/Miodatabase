@@ -1,3 +1,4 @@
+import os
 import pymongo
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -16,8 +17,11 @@ CATEGORY, CUSTOM_CATEGORY, LINK = range(3)
 
 # Connessione a MongoDB
 try:
-    mongo_client = pymongo.MongoClient("mongodb+srv://valag79:Figlio221503?@cluster0.mongodb.net/Miodatabase?retryWrites=true&w=majority")
-    db = mongo_client["Miodatabase"]
+    mongo_uri = os.getenv("MONGO_URI")
+    if not mongo_uri:
+        raise ValueError("MONGO_URI non è definito nelle variabili d'ambiente")
+    mongo_client = pymongo.MongoClient(mongo_uri)
+    db = mongo_client["affiliate_link_bot2-0"]
     links_collection = db["links"]
 except Exception as e:
     print(f"Errore nella connessione a MongoDB: {e}")
@@ -164,7 +168,12 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 # Avvio del bot
 def main() -> None:
-    application = Application.builder().token("8142992227:AAFRtDg4lEn5LpktEftMa6Aeuqk8loDRxZM").build()
+    # Leggi il token dalle variabili d'ambiente
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not bot_token:
+        raise ValueError("TELEGRAM_BOT_TOKEN non è definito nelle variabili d'ambiente")
+
+    application = Application.builder().token(bot_token).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button, pattern='^(get_link|category_.*|cat_.*)$'))
