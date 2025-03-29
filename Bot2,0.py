@@ -21,7 +21,7 @@ try:
     if not mongo_uri:
         raise ValueError("MONGO_URI non è definito nelle variabili d'ambiente")
     mongo_client = pymongo.MongoClient(mongo_uri)
-    db = mongo_client["affiliate_link_bot2-0"]
+    db = mongo_client["Miodatabase"]
     links_collection = db["links"]
 except Exception as e:
     print(f"Errore nella connessione a MongoDB: {e}")
