@@ -1,5 +1,3 @@
-python
-
 import os
 import pymongo
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
